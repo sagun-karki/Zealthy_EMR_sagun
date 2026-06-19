@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { SignOutButton } from "./sign-out-button";
 import { auth } from "@/lib/auth";
@@ -55,9 +56,17 @@ export default async function Home() {
         </div>
 
         <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-xl font-semibold text-slate-950">
-            Upcoming Appointments
-          </h2>
+          <div className="mb-4 flex items-center justify-between gap-4">
+            <h2 className="text-xl font-semibold text-slate-950">
+              Upcoming Appointments
+            </h2>
+            <Link
+              href="/portal/appointments"
+              className="shrink-0 text-sm font-medium text-teal-700 hover:underline"
+            >
+              View all
+            </Link>
+          </div>
           {upcomingAppointments.length === 0 ? (
             <p className="text-slate-500">
               No appointments in the next 7 days.
@@ -83,9 +92,17 @@ export default async function Home() {
         </section>
 
         <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-xl font-semibold text-slate-950">
-            Medication Refills
-          </h2>
+          <div className="mb-4 flex items-center justify-between gap-4">
+            <h2 className="text-xl font-semibold text-slate-950">
+              Medication Refills
+            </h2>
+            <Link
+              href="/portal/prescriptions"
+              className="shrink-0 text-sm font-medium text-teal-700 hover:underline"
+            >
+              View all
+            </Link>
+          </div>
           {upcomingRefills.length === 0 ? (
             <p className="text-slate-500">No refills due in the next 7 days.</p>
           ) : (

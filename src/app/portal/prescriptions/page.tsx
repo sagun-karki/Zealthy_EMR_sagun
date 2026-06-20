@@ -9,13 +9,13 @@ export default async function PrescriptionsPage() {
   const session = await auth();
 
   if (!session?.user?.id) {
-    redirect("/login");
+    redirect("/");
   }
 
   const userId = Number.parseInt(session.user.id, 10);
 
   if (Number.isNaN(userId)) {
-    redirect("/login");
+    redirect("/");
   }
 
   const prescriptions = await prisma.prescription.findMany({

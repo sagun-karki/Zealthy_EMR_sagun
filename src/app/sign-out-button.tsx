@@ -12,7 +12,7 @@ export function SignOutButton() {
       disabled={isSigningOut}
       onClick={() => {
         setIsSigningOut(true);
-        void signOut({ callbackUrl: "/login" });
+        void signOut({ callbackUrl: "/" });
       }}
       className="shrink-0 text-sm text-red-600 hover:underline disabled:cursor-not-allowed disabled:text-slate-400"
     >

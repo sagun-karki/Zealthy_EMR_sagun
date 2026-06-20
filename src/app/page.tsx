@@ -1,6 +1,8 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { Suspense } from "react";
+import { LoginForm } from "./login-form";
 import { SignOutButton } from "./sign-out-button";
+import { expandAppointmentOccurrences } from "@/lib/appointments";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -10,13 +12,13 @@ export default async function Home() {
   const session = await auth();
 
   if (!session?.user?.id) {
-    redirect("/login");
+    return <LoggedOutHome />;
   }
 
   const userId = Number.parseInt(session.user.id, 10);
 
   if (Number.isNaN(userId)) {
-    redirect("/login");
+    return <LoggedOutHome />;
   }
 
   const now = new Date();
@@ -26,7 +28,6 @@ export default async function Home() {
     prisma.appointment.findMany({
       where: {
         userId,
-        datetime: { gte: now, lte: sevenDaysLater },
         endedAt: null,
       },
       orderBy: { datetime: "asc" },
@@ -40,6 +41,11 @@ export default async function Home() {
     }),
     prisma.user.findUnique({ where: { id: userId } }),
   ]);
+  const appointmentOccurrences = expandAppointmentOccurrences(
+    upcomingAppointments,
+    now,
+    sevenDaysLater,
+  );
 
   return (
     <main className="min-h-screen bg-slate-50 px-6 py-10">
@@ -67,15 +73,15 @@ export default async function Home() {
               View all
             </Link>
           </div>
-          {upcomingAppointments.length === 0 ? (
+          {appointmentOccurrences.length === 0 ? (
             <p className="text-slate-500">
               No appointments in the next 7 days.
             </p>
           ) : (
             <ul className="space-y-3">
-              {upcomingAppointments.map((appointment) => (
+              {appointmentOccurrences.map((appointment) => (
                 <li
-                  key={appointment.id}
+                  key={appointment.key}
                   className="border-b border-slate-200 pb-3 last:border-0 last:pb-0"
                 >
                   <div className="font-medium text-slate-900">
@@ -126,6 +132,31 @@ export default async function Home() {
           )}
         </section>
       </div>
+    </main>
+  );
+}
+
+function LoggedOutHome() {
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-slate-50 px-6 py-12">
+      <section className="w-full max-w-sm">
+        <div className="mb-8">
+          <p className="text-sm font-medium text-teal-700">Zealthy</p>
+          <h1 className="mt-2 text-3xl font-semibold text-slate-950">
+            Sign in
+          </h1>
+        </div>
+
+        <Suspense
+          fallback={
+            <div className="rounded-lg border border-slate-200 bg-white p-6 text-sm text-slate-600 shadow-sm">
+              Loading sign in...
+            </div>
+          }
+        >
+          <LoginForm />
+        </Suspense>
+      </section>
     </main>
   );
 }

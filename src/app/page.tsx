@@ -42,6 +42,11 @@ export default async function Home() {
     }),
     prisma.user.findUnique({ where: { id: userId } }),
   ]);
+
+  if (!user) {
+    return <LoggedOutHome />;
+  }
+
   const appointmentOccurrences = expandAppointmentOccurrences(
     upcomingAppointments,
     now,
@@ -57,9 +62,9 @@ export default async function Home() {
               Zealthy “mini” EMR
             </p>
             <h1 className="mt-2 text-3xl font-semibold text-slate-950">
-              Welcome, {user?.name}
+              Welcome, {user.name}
             </h1>
-            <p className="mt-1 text-slate-600">{user?.email}</p>
+            <p className="mt-1 text-slate-600">{user.email}</p>
           </div>
           <SignOutButton />
         </div>

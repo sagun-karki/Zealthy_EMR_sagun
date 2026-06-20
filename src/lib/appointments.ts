@@ -12,6 +12,7 @@ export type AppointmentOccurrence = {
   provider: string;
   datetime: Date;
   repeat: string | null;
+  endsAt: Date | null;
 };
 
 function addRepeatInterval(date: Date, repeat: string | null) {
@@ -46,6 +47,7 @@ export function expandAppointmentOccurrences(
           provider: appointment.provider,
           datetime: appointment.datetime,
           repeat: appointment.repeat,
+          endsAt: appointment.endedAt ?? null,
         });
       }
 
@@ -74,6 +76,7 @@ export function expandAppointmentOccurrences(
         provider: appointment.provider,
         datetime: new Date(occurrenceDate),
         repeat: appointment.repeat,
+        endsAt: appointment.endedAt ?? null,
       });
 
       const nextDate = addRepeatInterval(occurrenceDate, appointment.repeat);

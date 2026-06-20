@@ -14,8 +14,13 @@ export default async function AdminPage() {
     include: {
       appointments: {
         where: {
-          datetime: { gte: now },
-          endedAt: null,
+          OR: [
+            { datetime: { gte: now }, repeat: null },
+            {
+              repeat: { not: null },
+              OR: [{ endedAt: null }, { endedAt: { gte: now } }],
+            },
+          ],
         },
         orderBy: { datetime: "asc" },
       },

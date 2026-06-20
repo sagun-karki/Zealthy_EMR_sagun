@@ -42,8 +42,13 @@ export default async function PatientDetailPage({
       include: {
         appointments: {
           where: {
-            datetime: { gte: now },
-            OR: [{ endedAt: null }, { endedAt: { gte: now } }],
+            OR: [
+              { datetime: { gte: now }, repeat: null },
+              {
+                repeat: { not: null },
+                OR: [{ endedAt: null }, { endedAt: { gte: now } }],
+              },
+            ],
           },
           orderBy: { datetime: "asc" },
         },

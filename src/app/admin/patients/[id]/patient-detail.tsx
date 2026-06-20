@@ -628,13 +628,15 @@ function PrescriptionFields({
         <span className="text-sm font-medium text-slate-700">
           Refill Schedule
         </span>
-        <input
+        <select
           name="refillSchedule"
           required
-          placeholder="Refill schedule"
           defaultValue={refillSchedule}
           className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-950"
-        />
+        >
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
+        </select>
       </label>
     </>
   );

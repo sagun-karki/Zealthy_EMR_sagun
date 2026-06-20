@@ -43,7 +43,7 @@ export default async function PatientDetailPage({
         appointments: {
           where: {
             datetime: { gte: now },
-            endedAt: null,
+            OR: [{ endedAt: null }, { endedAt: { gte: now } }],
           },
           orderBy: { datetime: "asc" },
         },
@@ -76,6 +76,8 @@ export default async function PatientDetailPage({
           datetimeDisplay: appt.datetime.toLocaleString(),
           datetimeInput: formatDateTimeInput(appt.datetime),
           repeat: appt.repeat,
+          recurrenceEndsOn: appt.endedAt?.toISOString().slice(0, 10) ?? "",
+          recurrenceEndsOnDisplay: appt.endedAt?.toLocaleDateString() ?? "",
         })),
         prescriptions: patient.prescriptions.map((rx) => ({
           id: rx.id,

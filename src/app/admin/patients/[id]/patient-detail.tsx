@@ -15,6 +15,8 @@ type PatientDetailData = {
     datetimeDisplay: string;
     datetimeInput: string;
     repeat: string | null;
+    recurrenceEndsOn: string;
+    recurrenceEndsOnDisplay: string;
   }[];
   prescriptions: {
     id: number;
@@ -245,6 +247,7 @@ export function PatientDetail({
                         provider={appt.provider}
                         datetime={appt.datetimeInput}
                         repeat={appt.repeat}
+                        recurrenceEndsOn={appt.recurrenceEndsOn}
                       />
                       <div className="flex flex-wrap gap-2">
                         <SubmitButton
@@ -301,6 +304,11 @@ export function PatientDetail({
                               ? `Repeats ${appt.repeat}`
                               : "Does not repeat"}
                           </div>
+                          {appt.recurrenceEndsOnDisplay ? (
+                            <div className="mt-1 text-sm text-slate-600">
+                              Ends {appt.recurrenceEndsOnDisplay}
+                            </div>
+                          ) : null}
                         </div>
                         <button
                           type="button"
@@ -474,11 +482,15 @@ function AppointmentFields({
   provider,
   datetime,
   repeat,
+  recurrenceEndsOn,
 }: {
   provider?: string;
   datetime?: string;
   repeat?: string | null;
+  recurrenceEndsOn?: string;
 }) {
+  const [repeatValue, setRepeatValue] = useState(repeat || "");
+
   return (
     <>
       <label className="block space-y-1">
@@ -510,13 +522,27 @@ function AppointmentFields({
         <select
           name="repeat"
           className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-950"
-          defaultValue={repeat || ""}
+          value={repeatValue}
+          onChange={(event) => setRepeatValue(event.target.value)}
         >
           <option value="">Does not repeat</option>
           <option value="weekly">Weekly</option>
           <option value="monthly">Monthly</option>
         </select>
       </label>
+      {repeatValue ? (
+        <label className="block space-y-1">
+          <span className="text-sm font-medium text-slate-700">
+            Recurrence End Date
+          </span>
+          <input
+            name="recurrenceEndsOn"
+            type="date"
+            defaultValue={recurrenceEndsOn}
+            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-950"
+          />
+        </label>
+      ) : null}
     </>
   );
 }

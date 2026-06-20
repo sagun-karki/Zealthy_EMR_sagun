@@ -3,6 +3,7 @@ type AppointmentLike = {
   provider: string;
   datetime: Date;
   repeat: string | null;
+  endedAt?: Date | null;
 };
 
 export type AppointmentOccurrence = {
@@ -52,6 +53,9 @@ export function expandAppointmentOccurrences(
     }
 
     let occurrenceDate = new Date(appointment.datetime);
+    const recurrenceEnd = appointment.endedAt
+      ? new Date(Math.min(appointment.endedAt.getTime(), end.getTime()))
+      : end;
 
     while (occurrenceDate < start) {
       const nextDate = addRepeatInterval(occurrenceDate, appointment.repeat);
@@ -63,7 +67,7 @@ export function expandAppointmentOccurrences(
       occurrenceDate = nextDate;
     }
 
-    while (occurrenceDate <= end) {
+    while (occurrenceDate <= recurrenceEnd) {
       occurrences.push({
         key: `${appointment.id}-${occurrenceDate.toISOString()}`,
         id: appointment.id,

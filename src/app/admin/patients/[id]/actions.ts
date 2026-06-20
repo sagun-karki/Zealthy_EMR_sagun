@@ -14,6 +14,7 @@ export async function createAppointment(formData: FormData) {
   const provider = getString(formData, "provider");
   const datetime = getString(formData, "datetime");
   const repeat = getString(formData, "repeat");
+  const recurrenceEndsOn = getString(formData, "recurrenceEndsOn");
 
   if (!userId || !provider || !datetime) {
     return;
@@ -25,6 +26,7 @@ export async function createAppointment(formData: FormData) {
       provider,
       datetime: new Date(datetime),
       repeat: repeat || null,
+      endedAt: repeat && recurrenceEndsOn ? new Date(recurrenceEndsOn) : null,
     },
   });
 
@@ -60,6 +62,7 @@ export async function updateAppointment(formData: FormData) {
   const provider = getString(formData, "provider");
   const datetime = getString(formData, "datetime");
   const repeat = getString(formData, "repeat");
+  const recurrenceEndsOn = getString(formData, "recurrenceEndsOn");
 
   if (!id || !userId || !provider || !datetime) {
     return;
@@ -71,6 +74,7 @@ export async function updateAppointment(formData: FormData) {
       provider,
       datetime: new Date(datetime),
       repeat: repeat || null,
+      endedAt: repeat && recurrenceEndsOn ? new Date(recurrenceEndsOn) : null,
     },
   });
 

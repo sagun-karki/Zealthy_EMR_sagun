@@ -26,7 +26,7 @@ export default async function AppointmentsPage() {
   const appointments = await prisma.appointment.findMany({
     where: {
       userId,
-      endedAt: null,
+      OR: [{ endedAt: null }, { endedAt: { gte: now } }],
     },
     orderBy: { datetime: "asc" },
   });

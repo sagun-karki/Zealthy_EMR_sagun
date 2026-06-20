@@ -29,7 +29,7 @@ export default async function Home() {
     prisma.appointment.findMany({
       where: {
         userId,
-        endedAt: null,
+        OR: [{ endedAt: null }, { endedAt: { gte: now } }],
       },
       orderBy: { datetime: "asc" },
     }),

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { expandRefillOccurrences } from "@/lib/prescriptions";
 
 export const runtime = "nodejs";
 
@@ -18,10 +19,19 @@ export default async function PrescriptionsPage() {
     redirect("/");
   }
 
+  const now = new Date();
+  const threeMonthsLater = new Date(now);
+  threeMonthsLater.setMonth(threeMonthsLater.getMonth() + 3);
+
   const prescriptions = await prisma.prescription.findMany({
     where: { userId },
     orderBy: { refillOn: "asc" },
   });
+  const refillOccurrences = expandRefillOccurrences(
+    prescriptions,
+    now,
+    threeMonthsLater,
+  );
 
   return (
     <main className="min-h-screen bg-slate-50 px-6 py-10">
@@ -36,27 +46,32 @@ export default async function PrescriptionsPage() {
           <h1 className="mt-6 text-3xl font-semibold text-slate-950">
             Prescriptions
           </h1>
+          <p className="mt-2 text-slate-600">
+            Refill schedule for the next 3 months.
+          </p>
         </header>
 
         <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          {prescriptions.length === 0 ? (
-            <p className="text-slate-500">No prescriptions found.</p>
+          {refillOccurrences.length === 0 ? (
+            <p className="text-slate-500">
+              No prescription refills in the next 3 months.
+            </p>
           ) : (
             <ul className="space-y-4">
-              {prescriptions.map((prescription) => (
+              {refillOccurrences.map((refill) => (
                 <li
-                  key={prescription.id}
+                  key={refill.key}
                   className="border-b border-slate-200 pb-4 last:border-0 last:pb-0"
                 >
                   <div className="font-medium text-slate-900">
-                    {prescription.medication} - {prescription.dosage}
+                    {refill.medication} - {refill.dosage}
                   </div>
                   <div className="mt-1 text-sm text-slate-600">
-                    Quantity: {prescription.quantity}
+                    Quantity: {refill.quantity}
                   </div>
                   <div className="mt-1 text-sm text-slate-600">
-                    Refill due {prescription.refillOn.toLocaleDateString()} (
-                    {prescription.refillSchedule})
+                    Refill due {refill.refillOn.toLocaleDateString()} (
+                    {refill.refillSchedule})
                   </div>
                 </li>
               ))}
